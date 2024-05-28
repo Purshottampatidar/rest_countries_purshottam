@@ -1,16 +1,26 @@
 import React, {useState,useEffect} from 'react'
 import { Link,useParams } from 'react-router-dom';
-
-const Country = () => {
+const Country = ({countriesData}) => {
   const [country , setCountry] = useState([]);
   const {id} = useParams();
+  const [isLoading ,setLoading] = useState(false);
+  const [error, setError] = useState(null);
   // console.log(countryName);
 
   const fetchCountryData = async () => {
-    const response = await fetch(`https://restcountries.com/v3.1/alpha/${id}`);
-    const country = await response.json();
-    // console.log(country);
-    setCountry(country);
+    setLoading(true);
+    setError(null);
+    try{
+      // const response = await fetch(`https://restcountries.com/v3.1/alpha/${id}`);
+      // const country = await response.json();
+      // console.log(country);
+      const country = countriesData.filter((country)=>country.name.common === id);
+      setCountry(country);
+    }catch(error){
+       setError(error);
+    }finally{
+       setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -50,8 +60,21 @@ const Country = () => {
           if(countryData.borders){
               borderCountryArray=countryData.borders;
           }
-         
-          // console.log(borderCountryArray);
+          let borderCountry = [];
+          if(borderCountryArray.length>0){
+             borderCountry =borderCountryArray.map((countryCode)=>{
+                  return countriesData.find((country)=>{
+                    return country.cca3 === countryCode;
+                  })
+             })
+          }
+          // console.log(borderCountry);
+          let borderCountryName = [];
+          borderCountryName = borderCountry.map((country)=>{
+               return country.name.common;
+          })
+          // console.log(borderCountryName)
+
           let nativeName;
           // console.log(country);
           for (const lang in countryData.name.nativeName) {
@@ -83,11 +106,16 @@ const Country = () => {
                           <h4>Languages: <span>{lang}</span></h4>
                         </div>
                       </div>
-                      <div className='country-out-data'><h4>Border Countries: </h4>
-                        {borderCountryArray.map((border,index) => (
-                          <button className='border-btn'  key={index}>{border}</button>
-                        ))}
+                      <div className='country-out-data'>
+                          <h4>Border Countries: </h4>
+                          {borderCountryName.length === 0 ? (
+                             <button className='border-btn'>No border countries</button>
+                          ) : (
+                          borderCountryName.map((name, index) => (
+                             <button className='border-btn' key={index}>{name}</button>))
+                          )}
                       </div>
+
                     </div>
               </div>
              </article>

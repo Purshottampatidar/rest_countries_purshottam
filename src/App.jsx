@@ -4,6 +4,7 @@ import Header from './Components/Header'
 import Country from './Components/Country';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { ThemeProvider, useTheme } from './Components/ThemeContext';
+import countriesData from './countries.json';
 
 function App() {
   return (
@@ -21,8 +22,8 @@ function AppContainer() {
       <Router>
       <Header />
        <Routes>
-         <Route path="/" element={<Countries />} />
-         <Route path="/country/:id" element={<Country />} />
+         <Route path="/" element={<Countries countriesData={countriesData} />} />
+         <Route path="/country/:id" element={<Country countriesData={countriesData} />} />
       </Routes>
       </Router>
     </div>
