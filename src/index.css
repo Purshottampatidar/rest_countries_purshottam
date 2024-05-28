@@ -109,7 +109,6 @@ body{
    outline: none;
    padding: 15px;
    border-radius: 0.5rem;
-   /* width: 100%; */
    margin-bottom: 10px;
    font-family: inherit;
    letter-spacing: 0.1rem;
@@ -240,7 +239,7 @@ body{
     flex-direction: row;
   }
   .filter .form-control input{
-    width: 40%;
+    width:30vw;
   }
   
   .country-grid{
@@ -253,11 +252,17 @@ body{
   .country-grid{
     grid-template-columns:repeat(3,1fr);
   } 
+  .filter{
+    flex-wrap: wrap;
+  }
 }
 
 @media (min-width:990px) {
   .country-grid{
     grid-template-columns:repeat(4,1fr);
+  }
+  .filter{
+    flex-wrap: nowrap;
   }
   
 }
