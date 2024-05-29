@@ -169,7 +169,7 @@ body{
 }
 .country-container{
   padding:2rem 4rem;
-  height:85vh;
+  /* height:85vh; */
 }
 .back-btn{
   border: none;
