@@ -27,18 +27,19 @@ a{
     background-color:var(--text-color);
     color: var(--light-mode-text);
   }
-  .filter .form-control input{
-     background-color: white;
-     color: var(--light-mode-text);
-    
+  .input-container{
+    background-color: var(--light-mode-background)
   }
- .filter .form-control input::placeholder{
+  .filter-container{
+    background-color: var(--light-mode-background);
     color: var(--light-mode-text);
- }
- .filter .filter-region select{
-    background-color:var(--text-color);
-    color: var(--light-mode-text);
- }
+  }
+  .input-container{
+     color: black;
+  }
+  .input-container::placeholder{
+    color: black;
+  }
  .toogle-buttton{
     background-color:var(--light-mode-background);
     color: var(--light-mode-text);
@@ -100,36 +101,23 @@ body{
   margin-bottom:20px;
   padding: 0rem 4rem;
 }
-.filter .form-control{
-    width: 100%;
-}
-.filter .form-control input{
-   background-color:var(--article-color);
-   border: none;
-   outline: none;
-   padding: 15px;
-   border-radius: 0.5rem;
-   margin-bottom: 10px;
-   font-family: inherit;
-   letter-spacing: 0.1rem;
-   color:var(--text-color);
-}
-.filter .form-control input::placeholder{
-  color:var(--text-color);
-}
 
-.filter .filter-region{
-   align-self: flex-start;
+.input-container{
+    padding:0.5rem;
+    width:20%;
+    border-radius:0.5rem;
+    background-color: var(--dark-bg-color);
+    color: var(--text-color);
 }
-.filter .filter-region .select{
-  padding: 15px;
-  /* width: 200px; */
-  border: none;
-  outline: none;
-  background-color: var(--article-color);
+.input-container::placeholder{
   color: var(--text-color);
-  font-family: inherit;
+}
+.filter-container{
+  padding:0.5rem;
+  font-size:0.9rem;
   border-radius: 0.5rem;
+  background-color: var(--dark-bg-color);
+  color: var(--text-color);
 }
 .country-grid{
      display: grid;

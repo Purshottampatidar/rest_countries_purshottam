@@ -4,7 +4,6 @@ import Header from './Components/Header'
 import Country from './Components/Country';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { ThemeProvider, useTheme } from './Components/ThemeContext';
-import countriesData from './countries.json';
 
 function App() {
   return (
@@ -13,7 +12,6 @@ function App() {
     </ThemeProvider>
   );
 }
-
 function AppContainer() {
   const { darkMode } = useTheme();
 
@@ -22,27 +20,11 @@ function AppContainer() {
       <Router>
       <Header />
        <Routes>
-         <Route path="/" element={<Countries countriesData={countriesData} />} />
-         <Route path="/country/:id" element={<Country countriesData={countriesData} />} />
+         <Route path="/" element={<Countries/>} />
+         <Route path="/country/:id" element={<Country />} />
       </Routes>
       </Router>
     </div>
   );
 }
-
-
-
-
-
-// function App() {
-//   return (
-//     <Router>
-//       <Header />
-//       <Routes>
-//         <Route path="/" element={<Countries />} />
-//         <Route path="/country/:id" element={<Country />} />
-//       </Routes>
-//     </Router>
-//   )
-// }
 export default App

@@ -1,33 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import Filter from './Filter';
-import { Link } from 'react-router-dom';
-// const url = 'https://restcountries.com/v3.1/all';
-const Countries = ({countriesData}) => {
-  const [countries, setCountries] = useState(countriesData);
-  // const [countries ,setCountries] = useState(data);
-  const [filteredCountries, setFilteredCountries] = useState([]);
-  const [selectedRegion, setSelectedRegion] = useState('');
-  const [selectedSubRegion, setSelectedSubRegion] = useState('');
-  const [subRegions, setSubRegions] = useState([]);
-  const [sortedCountry,setSortedCountry] = useState([]);
-  const [isLoading ,setLoading] = useState(false);
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import Data from "../countries.json";
+import Filter from "../Components/Filter";
+import SearchInput from "./SearchInput";
+const Countries = () => {
+  const [countries, setCountries] = useState([]);
+  const [searchCountry, setSearchCountry] = useState("");
+  const [selectedRegion, setSelectedRegion] = useState("");
+  const [selectedSubregion, setSelectedSubregion] = useState("");
+  const [sortPopulation, setSortPopulation] = useState("");
+  const [sortArea, setSortArea] = useState("");
+  const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [search, setSearch] = useState('');
 
-  //  console.log(countriesData);
-/*-------------------------------fetching data from the url----------------------------- */
-  const fetchCountryData =  () => {
+  const fetchCountryData = () => {
     setLoading(true);
     setError(null);
-    try{
-      // const response = await fetch(url);
-      // const countriesData = await response.json();
-      setCountries(countriesData);
-      setFilteredCountries(countriesData);
-    }catch(error){
-       setError(error);
-    }
-    finally{
+    try {
+      setCountries(Data);
+    } catch (error) {
+      setError(error);
+    } finally {
       setLoading(false);
     }
   };
@@ -36,145 +29,145 @@ const Countries = ({countriesData}) => {
     fetchCountryData();
   }, []);
 
-//----------------------------------filtering search , selectedRegion , selected sub Region-----------------------------//
-  const filterCountries = () => {
-    let filtered = countries;
+  const regions = countries.reduce((acc, country) => {
+    acc.add(country.region);
+    return acc;
+  }, new Set());
 
-    if (search) {
-      filtered = filtered.filter((country) =>
-        country.name.common.toLowerCase().includes(search.toLowerCase())
-      );
-    }
+  const subregions = countries
+    .filter((country) => country.region === selectedRegion)
+    .reduce((acc, country) => {
+      acc.add(country.subregion);
+      return acc;
+    }, new Set());
 
-    if (selectedSubRegion) {
-      filtered = filtered.filter((country) =>
-        country.subregion === selectedSubRegion
-      );
-    } else if (selectedRegion) {
-      filtered = filtered.filter((country) =>
-        country.region.toLowerCase() === selectedRegion.toLowerCase()
-      );
-    }
-
-    setFilteredCountries(filtered);
-  };
-
-  useEffect(() => {
-    filterCountries();
-  }, [search, selectedRegion, selectedSubRegion]);
-
-
-//------------------------------------search function---------------------------------------------------//
-  const handleSearch = (query) => {
-    setSearch(query);
-  };
-
-
-//-----------------------------------filter Region---------------------------------------------------//
-  const handleRegionChange = (region) => {
+  const handleRegion = (region) => {
     setSelectedRegion(region);
-    setSelectedSubRegion('');
-    const subRegionsSet = new Set();
-    countries.forEach((country) => {
-      if (country.region.toLowerCase() === region.toLowerCase()) {
-        subRegionsSet.add(country.subregion);
-      }
-    });
-    setSubRegions(Array.from(subRegionsSet));
+    setSelectedSubregion("");
   };
 
-//----------------------------------filter sub region -------------------------------------------//
-  const handleSubRegionChange = (subRegion) => {
-    setSelectedSubRegion(subRegion);
+  const handleSubRegion = (subregion) => {
+    setSelectedSubregion(subregion);
   };
 
+  const handleSearch = (countryName) => {
+    setSearchCountry(countryName);
+  };
 
-/*----------------------------------------sorting countries by populations wise---------------------- */
-  const handleSortCountry = (sort)=>{
-      setSortedCountry(sort);
-      if(sortedCountry){
-        filterSortPopulation(sortedCountry,filteredCountries);
-      }else{
-        setFilteredCountries(filteredCountries);
-      }
-  }
+  const handleSortPopulation = (sortValue) => {
+    setSortPopulation(sortValue);
+  };
+  const handleSortArea = (sortValue) => {
+    setSortArea(sortValue);
+  };
 
-  const filterSortPopulation = (sort , filteredCountries)=>{
-      if(sort==='ascending'){
-         const filtered = filteredCountries.slice().sort((a,b)=>a.population - b.population);
-         setFilteredCountries(filtered);
-      }else{
-         const filtered = filteredCountries.slice().sort((a,b)=>b.population - a.population);
-         setFilteredCountries(filtered);
-      }
-  }
+  const filterCountries = () => {
+    let filteredData = countries;
 
-
-/*---------------------------------------sorting countries by area wise--------------------------- */
-  const handleSortArea=(sort)=>{
-    if(sort){
-      filterSortArea(sort,filteredCountries);
-    }else{
-      setFilteredCountries(filteredCountries);
+    if (searchCountry) {
+      filteredData = filteredData.filter((country) =>
+        country.name.common.toLowerCase().includes(searchCountry.toLowerCase())
+      );
     }
-  }
-  const filterSortArea = (sort , filteredCountries)=>{
-    if(sort==='ascending'){
-       const filtered = filteredCountries.slice().sort((a,b)=>a.area - b.area);
-       setFilteredCountries(filtered);
-    }else{
-       const filtered = filteredCountries.slice().sort((a,b)=>b.area - a.area);
-       setFilteredCountries(filtered);
+    if (selectedRegion) {
+      filteredData = filteredData.filter(
+        (country) =>
+          country.region.toLowerCase() === selectedRegion.toLowerCase()
+      );
     }
-  }
-  
+    if (selectedSubregion) {
+      filteredData = filteredData.filter(
+        (country) =>
+          country.subregion.toLowerCase() === selectedSubregion.toLowerCase()
+      );
+    }
+    if (sortPopulation) {
+      filteredData = filteredData.sort((a, b) => {
+        if (sortPopulation === "ase") {
+          return a.population - b.population;
+        } else if (sortPopulation === "dsc") {
+          return b.population - a.population;
+        }
+      });
+    }
+    if (sortArea) {
+      filteredData = filteredData.sort((a, b) => {
+        if (sortArea === "ase") {
+          return a.area - b.area;
+        } else if (sortArea === "dsc") {
+          return b.area - a.area;
+        }
+      });
+    }
+    return filteredData;
+  };
+  const sortArray = ["ase", "dsc"];
+  const finalData = filterCountries();
   return (
     <>
-      <Filter
-        onSearch={handleSearch}
-        onRegionChange={handleRegionChange}
-        onSubRegionChange={handleSubRegionChange}
-        subRegions={subRegions}
-        onSortCountry={handleSortCountry}
-        onSortArea={handleSortArea}
-      />
-      <section className='country-grid'>
+      <div className="filter">
+        <SearchInput onSearch={handleSearch} />
+        <Filter onSelect={handleRegion} target={regions} filterBy={"Region"} />
+        <Filter
+          onSelect={handleSubRegion}
+          target={subregions}
+          filterBy={"SubRegion"}
+        />
+        <Filter
+          onSelect={handleSortPopulation}
+          target={sortArray}
+          filterBy={"Population"}
+        />
+        <Filter
+          onSelect={handleSortArea}
+          target={sortArray}
+          filterBy={"Area"}
+        />
+      </div>
+      <section className="country-grid">
         {isLoading ? (
-          <h1 className='loading'>loading...</h1>
-        ):error ? (<div>error : {error}</div>)
-        : filteredCountries.length === 0 ? (
+          <h1 className="loading">loading...</h1>
+        ) : error ? (
+          <div>error : {error}</div>
+        ) : finalData.length === 0 ? (
           <div>No results found</div>
-        ):(
-         filteredCountries.map((country) => {
-          const countryName = country.name.common;
-          const region = country.region;
-          const population = country.population;
-          const capital = country.capital;
-          const flag = country.flags.png;
-          const ccn3= country.ccn3;
-          const idArray =country.tld;
-          let idstring;
-          if(idArray){
+        ) : (
+          finalData.map((country) => {
+            const countryName = country.name.common;
+            const region = country.region;
+            const population = country.population;
+            const capital = country.capital;
+            const flag = country.flags.png;
+            const ccn3 = country.ccn3;
+            const idArray = country.tld;
+            let idstring;
+            if (idArray) {
               const id = idArray[0];
-              idstring= id.slice(1);
-          }
-          return (
-            <Link key={countryName} to={`country/${countryName}`}>
-            <article className='article' >
-              <div>
-                <img src={flag} alt={countryName} />
-                <div className="content">
-                  <h2 className="country-name">{countryName}</h2>
-                  <h4>Population: <span>{population}</span></h4>
-                  <h4>Region: <span>{region}</span></h4>
-                  <h4>Capital: <span>{capital}</span></h4>
-                </div>
-              </div>
-            </article>
-            </Link>
-          );
-        })
-      )}
+              idstring = id.slice(1);
+            }
+            return (
+              <Link key={countryName} to={`country/${countryName}`}>
+                <article className="article">
+                  <div>
+                    <img src={flag} alt={countryName} />
+                    <div className="content">
+                      <h2 className="country-name">{countryName}</h2>
+                      <h4>
+                        Population: <span>{population}</span>
+                      </h4>
+                      <h4>
+                        Region: <span>{region}</span>
+                      </h4>
+                      <h4>
+                        Capital: <span>{capital}</span>
+                      </h4>
+                    </div>
+                  </div>
+                </article>
+              </Link>
+            );
+          })
+        )}
       </section>
     </>
   );
